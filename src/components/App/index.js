@@ -1,9 +1,14 @@
 import '../../App.css';
+import Header from '../Header';
+import Landing from '../Landing';
+import Footer from '../Footer';
 
 function App() {
   return (
     <div>
-     Hello World
+     <Header />
+     <Landing />
+     <Footer />
     </div>
   );
 }
