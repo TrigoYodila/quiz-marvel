@@ -7,7 +7,7 @@ import Firebase, { FirebaseContext } from "./components/Firebase";
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
-    //passage du context, on instancie la classe et on la passe comme props
+    {/* passage du context, on instancie la classe et on la passe comme props */}
     <FirebaseContext.Provider value = {new Firebase()}>
       <App />
     </FirebaseContext.Provider>

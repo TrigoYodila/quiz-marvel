@@ -1,6 +1,6 @@
-import app from "firebase/app";
+import app from "firebase/compat/app";
 //importation du package d'authentification
-import "firebase/auth";
+import "firebase/compat/auth";
 
 //objet de configuration firebase
 const config = {
@@ -23,7 +23,7 @@ class Firebase {
 
   //inscription
   sighupUser = (email, password) => 
-    this.auth.createUserWithEmailAndPassword(email, password);
+    this.auth.createUserWithEmailAndPassword(email,password)
   
  
   //connexion
