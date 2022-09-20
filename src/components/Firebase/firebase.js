@@ -16,22 +16,22 @@ class Firebase {
   constructor() {
     app.initializeApp(config);
     //définition de l'objet pour accéder aux fonctionnalités firebase
+    //liées à l'authentification
     this.auth = app.auth();
   }
 
   //Méthodes
 
   //inscription
-  sighupUser = (email, password) => 
-    this.auth.createUserWithEmailAndPassword(email,password)
-  
- 
+  signupUser = (email, password) =>
+    this.auth.createUserWithEmailAndPassword(email, password);
+
   //connexion
-  loginUser = (email,password) => 
-    this.auth.signInWithEmailAndPassword(email,password)
-  
-    //deconnexion
-    signoutUser = () => this.auth.signOut();
+  loginUser = (email, password) =>
+    this.auth.signInWithEmailAndPassword(email, password);
+
+  //deconnexion
+  signoutUser = () => this.auth.signOut();
 }
 
 export default Firebase;
