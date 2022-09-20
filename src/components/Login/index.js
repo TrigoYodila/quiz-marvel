@@ -25,7 +25,6 @@ const Login = () => {
     firebase
       .loginUser(email, password)
       .then((user) => {
-        console.log(user)
         setEmail("");
         setPassword("");
         navigate("/welcome");
@@ -44,9 +43,8 @@ const Login = () => {
 
         <div className="formBoxRight">
           <div className="formContent">
+            {eror !== "" && <span>{eror.message}</span>}
 
-            {eror !== '' && <span>{eror.message}</span>}
-            
             <h2>Connexion</h2>
             <form onSubmit={handleSubmit}>
               <div className="inputBox">
@@ -80,6 +78,10 @@ const Login = () => {
             <div className="linkContainer">
               <Link className="simpleLink" to="/signup">
                 Nouveau sur Quiz Marvel ? Inscrivez-vous maintenant
+              </Link>
+              <br />
+              <Link className="simpleLink" to="/forgetpassword">
+                Mot de passe oublié ? Récupere-le ici.
               </Link>
             </div>
           </div>
