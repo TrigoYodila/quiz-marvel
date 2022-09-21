@@ -33,10 +33,18 @@ const Signup = () => {
   //on inscrit l'user
   const handleSubmit = (e) => {
     e.preventDefault();
-    const { email, password } = loginData;
+    const { email, password,pseudo } = loginData;
     firebase
       .signupUser(email, password)
-      .then((user) => {
+      .then(authUser => {
+        //crée un document(users et met pseudo et email comme donné)
+        return firebase.user(authUser.user.uid).set({
+          //on definit les valeurs qui serons créer (pseudo et email)
+          pseudo,   //pseudo = pseudo 
+          email    //email = email
+        })
+      })
+      .then(() => {
         //operation reussi, on vide l'objet
         setLoginData({ ...data });
         //rediriger l'user une fois l'inscription fini
