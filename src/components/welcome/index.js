@@ -7,7 +7,10 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 const Welcome = () => {
+  
   const [userSession, setUserSession] = useState(null);
+  const [userData, setUserData] = useState({})
+
   const firebase = useContext(FirebaseContext);
   const navigate = useNavigate();
 
@@ -19,12 +22,32 @@ const Welcome = () => {
       user ? setUserSession(user) : navigate("/");
     });
 
+    //si usersession est != null
+    if(!!userSession){   //userSession !== null
+      //recuperation des infos de l'utilisateur connecté
+      firebase
+        .user(userSession.uid)
+        .get()
+        .then((doc) => {
+          if (doc && doc.exists) {
+            const myData = doc.data();
+            //recupère les données et met les dans
+            //userData
+            setUserData(myData);
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
+
+
     //fonction qui s'execute après le demontage
     return () => {
       listener();
     };
 
-  }, []);
+  }, [userSession]);
 
   //Si la session est null on affiche un loader
   return userSession === null ? (
@@ -36,7 +59,7 @@ const Welcome = () => {
     <div className="quiz-bg">
       <div className="container">
         <Logout />
-        <Quiz />
+        <Quiz userData = {userData}/>
       </div>
     </div>
   );
