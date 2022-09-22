@@ -4,6 +4,7 @@ import ProgressBar from "../ProgressBar";
 import { QuizMarvel } from "../quizMarvel/";
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer, toast } from "react-toastify";
+import QuizOver from "../QuizOver";
 
 class Quiz extends Component {
   state = {
@@ -18,6 +19,7 @@ class Quiz extends Component {
     userAnswer: null,
     score: 0,
     showWelcomeMsg: false,
+    quizEnd: false,
   };
 
   //Ref pour stocker le data grâce à current
@@ -70,7 +72,9 @@ class Quiz extends Component {
 
   nextQuestion = () => {
     if (this.state.idQuestion === this.state.maxQuestions - 1) {
-      //End
+      //si on arrive à la fin des questions
+      //on affiche le game over
+      this.gameOver();
     } else {
       this.setState((prevState) => ({
         //recupère l'etat precedent de l'idQuestion
@@ -148,6 +152,12 @@ class Quiz extends Component {
     });
   };
 
+  gameOver = () => {
+    this.setState({
+      quizEnd: true,
+    });
+  };
+
   render() {
     // const { pseudo } = this.props.userData;
 
@@ -166,8 +176,12 @@ class Quiz extends Component {
       );
     });
 
-    return (
-      <div>
+    return this.state.quizEnd ? (
+      //si on atteint la 10è question,
+      //on affiche QuiZOver
+      <QuizOver />
+    ) : (
+      <>
         {/* <h2>pseudo : {pseudo}</h2> */}
         <Levels />
         <ProgressBar />
@@ -183,7 +197,7 @@ class Quiz extends Component {
           Suivant
         </button>
         <ToastContainer />
-      </div>
+      </>
     );
   }
 }
