@@ -14,7 +14,11 @@ class Quiz extends Component {
     idQuestion: 0,
     btnDisabled: true,
     userAnswer: null,
+    score:0
   };
+
+  //Ref pour stocker le data grâce à current
+  storedDataRef = React.createRef();
 
   //function quizz pour recupere le quizz
   //en fonction du niveau
@@ -22,6 +26,10 @@ class Quiz extends Component {
     const fetchedArrayQuiz = QuizMarvel[0].quizz[quizz];
 
     if (fetchedArrayQuiz.length >= this.state.maxQuestions) {
+      //stocke les data initiales avec reponses 
+      //dans le storedDataRef
+      this.storedDataRef.current = fetchedArrayQuiz;
+      
       //on retire le answer dans le tableau grâce au destructuring
       const newArray = fetchedArrayQuiz.map(
         ({ answer, ...keepRest }) => keepRest
@@ -39,11 +47,47 @@ class Quiz extends Component {
     this.loadQuestions(this.state.levelNames[this.state.quizLevel]);
   }
 
+  nextQuestion = () => {
+    if(this.state.idQuestion === this.state.maxQuestions - 1){
+      //End
+    }else{
+      this.setState( prevState => ({
+        //recupère l'etat precedent de l'idQuestion
+        idQuestion:prevState.idQuestion + 1
+      }))
+    }
+    
+    //recuperation de la vrai reponse
+    const goodAnswer = this.storedDataRef.current[this.state.idQuestion]
+
+    if(this.state.userAnswer === goodAnswer){
+      this.setState(prevState => ({
+        score:prevState.score + 1
+      }))
+    }
+  }
+
   componentDidUpdate(prevProps, prevState) {
     if (this.state.storeQuestions !== prevState.storeQuestions) {
       this.setState({
         question: this.state.storeQuestions[this.state.idQuestion].question,
         options: this.state.storeQuestions[this.state.idQuestion].options,
+      });
+    }
+
+    //passe à la question suivante
+    //si on effectue une modification à 
+    //l'id de la question
+    if(this.state.idQuestion !== prevState.idQuestion){
+      this.setState({
+        //si l'id change, on modifie la question et les options
+        question: this.state.storeQuestions[this.state.idQuestion].question,
+        options: this.state.storeQuestions[this.state.idQuestion].options,
+
+        //on vide la réponse du user
+        //on desactive la question
+        userAnswer:null,
+        btnDisabled:true
       });
     }
   }
@@ -64,7 +108,10 @@ class Quiz extends Component {
       return (
         <p
           key={index}
-          className={`answerOptions ${this.state.userAnswer === option ? "selected" : null}`}
+          //test si réponse choisis = option ajoute la classe selected
+          className={`answerOptions ${
+            this.state.userAnswer === option ? "selected" : null
+          }`}
           onClick={() => this.submitAnswer(option)}
         >
           {option}
@@ -81,7 +128,11 @@ class Quiz extends Component {
 
         {displayOptions}
 
-        <button disabled={this.state.btnDisabled} className="btnSubmit">
+        <button
+          disabled={this.state.btnDisabled}
+          className="btnSubmit"
+          onClick={this.nextQuestion}
+        >
           Suivant
         </button>
       </div>
