@@ -2,6 +2,8 @@ import React, { Component } from "react";
 import Levels from "../Levels";
 import ProgressBar from "../ProgressBar";
 import { QuizMarvel } from "../quizMarvel/";
+import "react-toastify/dist/ReactToastify.css";
+import { ToastContainer, toast } from "react-toastify";
 
 class Quiz extends Component {
   state = {
@@ -14,7 +16,8 @@ class Quiz extends Component {
     idQuestion: 0,
     btnDisabled: true,
     userAnswer: null,
-    score:0
+    score: 0,
+    showWelcomeMsg: false,
   };
 
   //Ref pour stocker le data grâce à current
@@ -26,10 +29,10 @@ class Quiz extends Component {
     const fetchedArrayQuiz = QuizMarvel[0].quizz[quizz];
 
     if (fetchedArrayQuiz.length >= this.state.maxQuestions) {
-      //stocke les data initiales avec reponses 
+      //stocke les data initiales avec reponses
       //dans le storedDataRef
       this.storedDataRef.current = fetchedArrayQuiz;
-      
+
       //on retire le answer dans le tableau grâce au destructuring
       const newArray = fetchedArrayQuiz.map(
         ({ answer, ...keepRest }) => keepRest
@@ -43,29 +46,67 @@ class Quiz extends Component {
     }
   };
 
+  showWelcomeMsg = (pseudo) => {
+    //test si showWelcome est false
+    if (!this.state.showWelcomeMsg) {
+      this.setState({
+        showWelcomeMsg: true,
+      });
+
+      toast.warn(`Bienvenue ${pseudo}, et bonne chance`, {
+        position: "top-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: false,
+        progress: undefined,
+      });
+    }
+  };
   componentDidMount() {
     this.loadQuestions(this.state.levelNames[this.state.quizLevel]);
   }
 
   nextQuestion = () => {
-    if(this.state.idQuestion === this.state.maxQuestions - 1){
+    if (this.state.idQuestion === this.state.maxQuestions - 1) {
       //End
-    }else{
-      this.setState( prevState => ({
+    } else {
+      this.setState((prevState) => ({
         //recupère l'etat precedent de l'idQuestion
-        idQuestion:prevState.idQuestion + 1
-      }))
+        idQuestion: prevState.idQuestion + 1,
+      }));
     }
-    
-    //recuperation de la vrai reponse
-    const goodAnswer = this.storedDataRef.current[this.state.idQuestion]
 
-    if(this.state.userAnswer === goodAnswer){
-      this.setState(prevState => ({
-        score:prevState.score + 1
-      }))
+    //recuperation de la vrai reponse
+    const goodAnswer = this.storedDataRef.current[this.state.idQuestion].answer;
+
+    if (this.state.userAnswer === goodAnswer) {
+      this.setState((prevState) => ({
+        score: prevState.score + 1,
+      }));
+
+      toast.success(`Reussie +1`, {
+        position: "top-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: false,
+        progress: undefined,
+      });
+    } else {
+      toast.error(`Echec 0`, {
+        position: "top-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: false,
+        progress: undefined,
+      });
     }
-  }
+  };
 
   componentDidUpdate(prevProps, prevState) {
     if (this.state.storeQuestions !== prevState.storeQuestions) {
@@ -76,9 +117,9 @@ class Quiz extends Component {
     }
 
     //passe à la question suivante
-    //si on effectue une modification à 
+    //si on effectue une modification à
     //l'id de la question
-    if(this.state.idQuestion !== prevState.idQuestion){
+    if (this.state.idQuestion !== prevState.idQuestion) {
       this.setState({
         //si l'id change, on modifie la question et les options
         question: this.state.storeQuestions[this.state.idQuestion].question,
@@ -86,9 +127,15 @@ class Quiz extends Component {
 
         //on vide la réponse du user
         //on desactive la question
-        userAnswer:null,
-        btnDisabled:true
+        userAnswer: null,
+        btnDisabled: true,
       });
+    }
+
+    //recuperation du pseudo du user
+    if (this.props.userData.pseudo) {
+      //si user existe
+      this.showWelcomeMsg(this.props.userData.pseudo);
     }
   }
 
@@ -135,6 +182,7 @@ class Quiz extends Component {
         >
           Suivant
         </button>
+        <ToastContainer />
       </div>
     );
   }
